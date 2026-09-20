@@ -1,0 +1,90 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix m:    <http://gsb.local/mapping#> .
+@prefix old:  <http://example.com/hr/v1#> .
+@prefix new:  <http://example.com/hr/v2#> .
+
+# exact class mapping, evidence bound to an explicit note
+old:Person a m:ClassMapping ;
+    m:relation m:exact ;
+    m:target new:Human ;
+    m:evidence [ m:type "explicit" ;
+                 m:detail "Person 1.0 and Human 2.0 model the same natural person." ;
+                 m:quad "<http://example.com/hr/v1#Person> <http://www.w3.org/2000/01/rdf-schema#label> \"Person\"@en" ] .
+
+# narrower: Employee becomes the more specific StaffMember
+old:Employee a m:ClassMapping ;
+    m:relation m:narrower ;
+    m:target new:StaffMember ;
+    m:evidence [ m:type "explicit" ;
+                 m:detail "v2 restricts payroll employees to StaffMember." ] .
+
+# one-to-many class mapping with a discriminating condition
+old:Contractor a m:ClassMapping ;
+    m:relation m:oneToMany ;
+    m:branch [ m:target new:StaffMember ;
+               m:whenProperty old:contractType ;
+               m:whenValue "FTE" ] ;
+    m:branch [ m:target new:ExternalWorker ;
+               m:whenProperty old:contractType ;
+               m:whenValue "FIXED" ] ;
+    m:evidence [ m:type "explicit" ;
+                 m:detail "FTE contractors are reclassified as staff; fixed-term stay external." ] .
+
+# broader: generic Department absorbs old Dept
+old:Dept a m:ClassMapping ;
+    m:relation m:broader ;
+    m:target new:Department ;
+    m:evidence [ m:type "explicit" ; m:detail "v2 Department is the broader organizational unit." ] .
+
+old:Task a m:ClassMapping ;
+    m:relation m:exact ;
+    m:target new:WorkItem ;
+    m:evidence [ m:type "localname_semantics" ; m:detail "Task renamed to Work Item." ] .
+
+# deprecated class with no replacement
+old:LegacyRole a m:ClassMapping ;
+    m:relation m:deprecated ;
+    m:evidence [ m:type "explicit" ; m:detail "Retired in 2.0; no replacement concept." ] .
+
+# ---- properties ----
+old:empName a m:PropertyMapping ;
+    m:relation m:exact ;
+    m:target new:fullName ;
+    m:evidence [ m:type "explicit" ; m:detail "Primary display name of a person." ] .
+
+old:empAge a m:PropertyMapping ;
+    m:relation m:exact ;
+    m:target new:ageYears ;
+    m:evidence [ m:type "explicit" ; m:detail "Age expressed in whole years." ] .
+
+old:worksIn a m:PropertyMapping ;
+    m:relation m:exact ;
+    m:target new:memberOf ;
+    m:evidence [ m:type "explicit" ; m:detail "Organizational membership relation." ] .
+
+old:assignedTo a m:PropertyMapping ;
+    m:relation m:exact ;
+    m:target new:workItemOwner ;
+    m:evidence [ m:type "explicit" ; m:detail "Person responsible for a work item." ] .
+
+old:staffCode a m:PropertyMapping ;
+    m:relation m:deprecated ;
+    m:evidence [ m:type "explicit" ; m:detail "Staff code retired; use new personId which is populated upstream." ] .
+
+old:deptCode a m:PropertyMapping ;
+    m:relation m:exact ;
+    m:target new:departmentCode ;
+    m:evidence [ m:type "explicit" ;
+                 m:detail "Department code carries over unchanged in meaning." ] .
+
+# ---- individuals ----
+old:dept_eng a m:IndividualMapping ;
+    m:relation m:exact ;
+    m:target new:team_engineering ;
+    m:evidence [ m:type "explicit" ; m:detail "Engineering department renumbered, same org unit." ] .
+
+old:dept_sales a m:IndividualMapping ;
+    m:relation m:exact ;
+    m:target new:team_sales ;
+    m:evidence [ m:type "explicit" ; m:detail "Sales department renumbered, same org unit." ] .

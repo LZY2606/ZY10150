@@ -1,0 +1,23 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix old:  <http://example.com/hr/v1#> .
+
+GRAPH <http://gsb.local/graph/instances-more> {
+    # Contractor whose discriminator does not satisfy any branch:
+    # contractType "INTERN" matches neither FTE nor FIXED.
+    old:frank a old:Contractor ;
+        old:empName "Frank" ;
+        old:empAge 22 ;
+        old:contractType "INTERN" .
+
+    # Deprecated class usage — triples must be dropped with evidence.
+    old:ghost a old:LegacyRole ;
+        old:empName "Ghost" .
+
+    # Closed-set extra property: the Dept carries its ageYears-like
+    # property in the source; after migration this becomes new:ageYears
+    # on a new:Department, whose closed shape does not allow it.
+    old:dept_x a old:Dept ;
+        old:deptCode "X-99" ;
+        old:empAge 12 .
+}

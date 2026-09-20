@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RDF 本体迁移审阅</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header>
+  <h1>RDF 词汇迁移审阅台</h1>
+  <div class="meta">
+    <span>映射版本 <b id="version">-</b></span>
+    <span>版本指纹 <code id="versionfp">-</code></span>
+    <button id="refresh">刷新</button>
+    <button id="suggest">重新自动建议</button>
+    <button id="preview">生成迁移预览</button>
+    <button id="publish" class="primary">发布</button>
+  </div>
+  <div id="banner" class="banner hidden"></div>
+</header>
+<main>
+  <section class="grid">
+    <div class="card"><h2>旧版本体子图 v1</h2><div id="oldTerms" class="terms"></div></div>
+    <div class="card"><h2>新版本体子图 v2</h2><div id="newTerms" class="terms"></div></div>
+  </section>
+  <section class="card">
+    <h2>映射候选与决议</h2>
+    <p class="hint">接受 exact / broader / narrower / 一对多，或标记废弃（无替代）。决议绑定候选证据、生效版本与理由。</p>
+    <table id="rulesTable">
+      <thead><tr><th>旧术语</th><th>类型</th><th>关系</th><th>新目标 / 分支条件</th><th>证据</th><th>状态</th><th>操作</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <div id="affected" class="affected hidden"></div>
+  </section>
+  <section class="card">
+    <h2>受影响实例（保留 named graph 来源）</h2>
+    <div id="instances" class="instances"></div>
+  </section>
+  <section class="card">
+    <h2>迁移预览：派生 triple 的证据路径</h2>
+    <div id="previewMeta" class="preview-meta">尚未生成。</div>
+    <div id="steps" class="steps"></div>
+  </section>
+  <section class="card">
+    <h2>SHACL 诊断</h2>
+    <div id="diagCats" class="cats"></div>
+    <table id="diagTable">
+      <thead><tr><th>类别</th><th>节点</th><th>路径</th><th>值</th><th>说明</th><th>证据路径</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+  <section class="card">
+    <h2>已发布图（规范化指纹）</h2>
+    <div id="published"></div>
+  </section>
+</main>
+<dialog id="decideDialog">
+  <form id="decideForm" method="dialog">
+    <h3>映射决议</h3>
+    <label>关系
+      <select id="dRelation">
+        <option value="exact">exact</option>
+        <option value="broader">broader</option>
+        <option value="narrower">narrower</option>
+        <option value="one_to_many">一对多</option>
+        <option value="deprecated">废弃（无替代）</option>
+      </select>
+    </label>
+    <label>目标 IRI（多个用换行）<textarea id="dTargets" rows="3"></textarea></label>
+    <label>理由 <input id="dRationale" placeholder="为什么接受该映射"></label>
+    <div class="dlg-actions">
+      <button value="cancel">取消</button>
+      <button id="dSubmit" value="default" class="primary">提交决议</button>
+    </div>
+  </form>
+</dialog>
+<script src="/static/app.js"></script>
+</body>
+</html>

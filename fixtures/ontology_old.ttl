@@ -1,0 +1,89 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix old:  <http://example.com/hr/v1#> .
+@prefix :     <http://example.com/hr/v1#> .
+
+<http://example.com/hr/v1> a owl:Ontology ;
+    owl:versionInfo "1.0" .
+
+# ---- Classes ----
+old:Person a owl:Class ;
+    rdfs:label "Person"@en , "人员"@zh ;
+    rdfs:comment "A human being employed by the company."@en .
+
+old:Employee a owl:Class ;
+    rdfs:subClassOf old:Person ;
+    rdfs:label "Employee"@en ;
+    rdfs:comment "A person on the payroll."@en .
+
+old:Contractor a owl:Class ;
+    rdfs:subClassOf old:Person ;
+    rdfs:label "Contractor"@en ;
+    rdfs:comment "External worker on a fixed contract."@en .
+
+old:Dept a owl:Class ;
+    rdfs:label "Department"@en , "部门"@zh .
+
+old:Task a owl:Class ;
+    rdfs:label "Task"@en .
+
+old:Pet a owl:Class ;
+    rdfs:label "Pet"@en .
+
+old:LegacyRole a owl:Class ;
+    rdfs:label "Legacy Role"@en ;
+    rdfs:comment "Obsolete classification, do not use."@en ;
+    owl:deprecated true .
+
+# ---- Properties ----
+old:empName a owl:DatatypeProperty ;
+    rdfs:label "employee name"@en ;
+    rdfs:domain old:Person ;
+    rdfs:range xsd:string .
+
+old:empAge a owl:DatatypeProperty ;
+    rdfs:label "employee age"@en ;
+    rdfs:domain old:Person ;
+    rdfs:range xsd:integer .
+
+old:worksIn a owl:ObjectProperty ;
+    rdfs:label "works in"@en ;
+    rdfs:domain old:Employee ;
+    rdfs:range old:Dept .
+
+old:assignedTo a owl:ObjectProperty ;
+    rdfs:label "assigned to"@en ;
+    rdfs:domain old:Task ;
+    rdfs:range old:Person .
+
+old:contractType a owl:DatatypeProperty ;
+    rdfs:label "contract type"@en ;
+    rdfs:domain old:Person ;
+    rdfs:range xsd:string .
+
+old:staffCode a owl:DatatypeProperty ;
+    rdfs:label "staff code"@en ;
+    owl:deprecated true ;
+    rdfs:comment "Replaced by the company-wide person id."@en .
+
+old:hasPet a owl:ObjectProperty ;
+    rdfs:label "has pet"@en ;
+    rdfs:domain old:Person ;
+    rdfs:range old:Pet .
+
+# ---- Individuals ----
+old:dept_sales a owl:NamedIndividual , old:Dept ;
+    rdfs:label "Sales"@en .
+
+old:dept_eng a owl:NamedIndividual , old:Dept ;
+    rdfs:label "Engineering"@en .
+
+old:pet_miso a owl:NamedIndividual , old:Pet ;
+    rdfs:label "Miso"@en .
+
+old:deptCode a owl:DatatypeProperty ;
+    rdfs:label "department code"@en ;
+    rdfs:domain old:Dept ;
+    rdfs:range xsd:string .

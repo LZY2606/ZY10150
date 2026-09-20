@@ -1,0 +1,59 @@
+{
+  "@context": {
+    "@vocab": "http://example.com/hr/v1#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "old": "http://example.com/hr/v1#",
+    "empName": "http://example.com/hr/v1#empName",
+    "empAge": "http://example.com/hr/v1#empAge",
+    "worksIn": "http://example.com/hr/v1#worksIn",
+    "staffCode": "http://example.com/hr/v1#staffCode",
+    "hasPet": "http://example.com/hr/v1#hasPet",
+    "contractType": "http://example.com/hr/v1#contractType",
+    "assignedTo": "http://example.com/hr/v1#assignedTo",
+    "Employee": "http://example.com/hr/v1#Employee",
+    "Person": "http://example.com/hr/v1#Person",
+    "Contractor": "http://example.com/hr/v1#Contractor",
+    "Task": "http://example.com/hr/v1#Task"
+  },
+  "@graph": [
+    {
+      "@id": "old:alice",
+      "@type": "old:Employee",
+      "empName": { "@value": "Alice", "@language": "en" },
+      "empAge": { "@value": "42", "@type": "xsd:integer" },
+      "worksIn": { "@id": "old:dept_eng" },
+      "staffCode": "S-0001",
+      "hasPet": { "@id": "old:pet_miso" }
+    },
+    {
+      "@id": "old:bob",
+      "@type": "old:Person",
+      "empName": "Bob",
+      "empAge": { "@value": "thirty", "@type": "xsd:integer" }
+    },
+    {
+      "@id": "old:carol",
+      "@type": "old:Person",
+      "empAge": 31,
+      "staffCode": "S-0777"
+    },
+    {
+      "@id": "old:dave",
+      "@type": "old:Contractor",
+      "empName": "Dave",
+      "empAge": 27,
+      "contractType": "FTE"
+    },
+    {
+      "@id": "old:erin",
+      "@type": "old:Contractor",
+      "empName": "Erin",
+      "empAge": 39
+    },
+    {
+      "@id": "old:t1",
+      "@type": "old:Task",
+      "assignedTo": { "@id": "old:alice" }
+    }
+  ]
+}

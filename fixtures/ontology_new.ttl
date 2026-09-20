@@ -1,0 +1,69 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix new:  <http://example.com/hr/v2#> .
+@prefix :     <http://example.com/hr/v2#> .
+
+<http://example.com/hr/v2> a owl:Ontology ;
+    owl:versionInfo "2.0" .
+
+# ---- Classes ----
+new:Human a owl:Class ;
+    rdfs:label "Human"@en , "人员"@zh ;
+    rdfs:comment "Any natural person recorded by HR."@en .
+
+new:StaffMember a owl:Class ;
+    rdfs:subClassOf new:Human ;
+    rdfs:label "Staff Member"@en .
+
+new:ExternalWorker a owl:Class ;
+    rdfs:subClassOf new:Human ;
+    rdfs:label "External Worker"@en ;
+    owl:disjointWith new:StaffMember .
+
+new:Department a owl:Class ;
+    rdfs:label "Department"@en , "部门"@zh .
+
+new:WorkItem a owl:Class ;
+    rdfs:label "Work Item"@en .
+
+# Note: no Pet class and no LegacyRole class in v2.
+
+# ---- Properties ----
+new:fullName a owl:DatatypeProperty ;
+    rdfs:label "full name"@en ;
+    rdfs:domain new:Human ;
+    rdfs:range xsd:string .
+
+new:ageYears a owl:DatatypeProperty ;
+    rdfs:label "age in years"@en ;
+    rdfs:domain new:Human ;
+    rdfs:range xsd:integer .
+
+new:memberOf a owl:ObjectProperty ;
+    rdfs:label "member of"@en ;
+    rdfs:domain new:Human ;
+    rdfs:range new:Department .
+
+new:workItemOwner a owl:ObjectProperty ;
+    rdfs:label "work item owner"@en ;
+    rdfs:domain new:WorkItem ;
+    rdfs:range new:Human .
+
+new:personId a owl:DatatypeProperty ;
+    rdfs:label "person id"@en ;
+    rdfs:domain new:Human ;
+    rdfs:range xsd:string .
+
+# ---- Individuals ----
+new:team_sales a owl:NamedIndividual , new:Department ;
+    rdfs:label "Sales"@en .
+
+new:team_engineering a owl:NamedIndividual , new:Department ;
+    rdfs:label "Engineering"@en .
+
+new:departmentCode a owl:DatatypeProperty ;
+    rdfs:label "department code"@en ;
+    rdfs:domain new:Department ;
+    rdfs:range xsd:string .

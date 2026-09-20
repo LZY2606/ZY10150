@@ -1,0 +1,70 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix new:  <http://example.com/hr/v2#> .
+
+# Human shape: fullName required (missing data), ageYears must be an
+# integer (datatype), memberOf must be a new:Department IRI.
+new:HumanShape a sh:NodeShape ;
+    sh:targetClass new:Human ;
+    sh:property [
+        sh:path new:fullName ;
+        sh:minCount 1 ;
+    ] ;
+    sh:property [
+        sh:path new:personId ;
+        sh:minCount 1 ;
+        sh:datatype xsd:string ;
+    ] ;
+    sh:property [
+        sh:path new:ageYears ;
+        sh:datatype xsd:integer ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path new:memberOf ;
+        sh:nodeKind sh:IRI ;
+        sh:class new:Department ;
+    ] .
+
+# StaffMember shape: role category must come from a closed sh:in set.
+# Mapping Employee -> StaffMember (narrower) plus an unmapped/legacy role
+# produces a mapping-contradiction diagnostic when the migrated value is
+# outside the set.
+new:StaffShape a sh:NodeShape ;
+    sh:targetClass new:StaffMember ;
+    sh:property [
+        sh:path new:fullName ;
+        sh:minCount 1 ;
+    ] ;
+    sh:property [
+        sh:path new:ageYears ;
+        sh:datatype xsd:integer ;
+    ] ;
+    sh:property [
+        sh:path new:memberOf ;
+        sh:in ( new:team_sales new:team_engineering ) ;
+    ] .
+
+# Closed Department shape: only departmentCode is allowed beyond rdf:type.
+# An extra migrated path is reported as closed_extra_property.
+new:DepartmentShape a sh:NodeShape ;
+    sh:targetClass new:Department ;
+    sh:closed true ;
+    sh:ignoredProperties ( rdf:type ) ;
+    sh:property [
+        sh:path new:departmentCode ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+    ] .
+
+# WorkItem shape: owner is required.
+new:WorkItemShape a sh:NodeShape ;
+    sh:targetClass new:WorkItem ;
+    sh:property [
+        sh:path new:workItemOwner ;
+        sh:minCount 1 ;
+        sh:nodeKind sh:IRI ;
+        sh:class new:Human ;
+    ] .
