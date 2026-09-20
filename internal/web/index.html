@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>RDF 词汇迁移审阅台</title>
+<style>
+  :root{--bg:#0f1420;--panel:#171e2e;--panel2:#1d2638;--line:#2a3550;--fg:#e6ecf7;
+    --mut:#93a1bd;--acc:#5b9dff;--ok:#37b87c;--warn:#e8b34b;--bad:#ef5f6b;--pur:#b083ff;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 -apple-system,Segoe UI,Roboto,"PingFang SC","Hiragino Sans",sans-serif}
+  header{padding:14px 20px;border-bottom:1px solid var(--line);display:flex;gap:16px;align-items:center;flex-wrap:wrap;background:linear-gradient(180deg,#141b2b,#0f1420)}
+  header h1{font-size:16px;margin:0;font-weight:650}
+  .pill{border:1px solid var(--line);border-radius:999px;padding:2px 10px;color:var(--mut);font-size:12px}
+  .pill b{color:var(--fg)}
+  main{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:14px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .card > h2{margin:0;padding:11px 14px;font-size:13px;letter-spacing:.3px;text-transform:uppercase;color:var(--mut);
+    border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;background:var(--panel2)}
+  .card .body{padding:12px 14px;max-height:70vh;overflow:auto}
+  .full{grid-column:1 / -1}
+  button{background:var(--acc);color:#06101f;border:0;border-radius:8px;padding:6px 12px;font-weight:650;cursor:pointer}
+  button.ghost{background:transparent;color:var(--acc);border:1px solid var(--acc)}
+  button.warn{background:var(--warn);color:#201600}
+  button.bad{background:var(--bad);color:#26070a}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  input,textarea{background:#0d1320;border:1px solid var(--line);color:var(--fg);border-radius:8px;padding:6px 8px;width:100%}
+  .cand{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:10px;background:var(--panel2)}
+  .cand .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+  .term{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .iri{color:var(--acc)}
+  .rel{font-size:11px;padding:1px 8px;border-radius:999px;border:1px solid var(--line);color:var(--mut)}
+  .rel.exact{color:#a8e6c8;border-color:#2f6b50}
+  .rel.broader{color:#ffe0a3;border-color:#7a5a1e}
+  .rel.narrower{color:#cdd9ff;border-color:#35508c}
+  .rel.oneToMany{color:#e2ccff;border-color:#5d3f94}
+  .rel.deprecated{color:#ffc2c7;border-color:#7e2d36}
+  .badge{font-size:11px;padding:1px 8px;border-radius:999px;border:1px solid var(--line)}
+  .badge.accepted{color:#a8e6c8;border-color:#2f6b50}
+  .badge.deprecated{color:#ffc2c7;border-color:#7e2d36}
+  .badge.rejected{color:#ffc2c7;border-color:#7e2d36}
+  .badge.pending{color:var(--mut)}
+  details{margin-top:8px}
+  summary{cursor:pointer;color:var(--mut);font-size:12px}
+  .evi{border-left:2px solid var(--line);padding:4px 8px;margin:6px 0;background:#121a2a;border-radius:0 8px 8px 0}
+  .evi code,.path code{display:block;white-space:pre-wrap;word-break:break-all;font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:#bcd0f2}
+  table{border-collapse:collapse;width:100%;font-size:12px}
+  th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+  th{color:var(--mut);font-weight:600;position:sticky;top:0;background:var(--panel2)}
+  .tag{display:inline-block;font-size:10.5px;padding:0 7px;border-radius:6px;border:1px solid var(--line);color:var(--mut);margin-right:4px}
+  .tag.miss{color:#ffe0a3;border-color:#7a5a1e}
+  .tag.dtype{color:#cdd9ff;border-color:#35508c}
+  .tag.closed{color:#ffc2c7;border-color:#7e2d36}
+  .tag.enum{color:#ffd8a8;border-color:#8a5a20}
+  .tag.contra{color:#e2ccff;border-color:#5d3f94}
+  .tag.unres{color:#ffb7b7;border-color:#944}
+  .muted{color:var(--mut)}
+  .arrow{color:var(--pur)}
+  .branch{margin-left:14px}
+  .toast{position:fixed;right:16px;bottom:16px;max-width:420px;background:#111827;border:1px solid var(--line);
+    border-radius:10px;padding:10px 12px;display:none;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+  .toast.show{display:block}
+  .conflict{border:1px solid var(--bad);border-radius:10px;padding:10px;margin:10px 0;background:#241318}
+  .langtag{color:var(--warn)}
+  .dt{color:#8fc1ff}
+  .grid2{display:grid;grid-template-columns:1fr auto;gap:4px 10px}
+  .mono{font-family:ui-monospace,Menlo,monospace;font-size:11.5px}
+  .seg{display:flex;gap:6px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<header>
+  <h1>RDF 词汇迁移审阅台</h1>
+  <span class="pill">映射版本 <b id="ver">-</b></span>
+  <span class="pill">规则指纹 <b id="rulefp" class="mono">-</b></span>
+  <span class="pill">已发布 <b id="pubcount">0</b></span>
+  <span class="row" style="margin-left:auto">
+    <button class="ghost" id="btnSuggest">重新自动建议</button>
+    <button class="ghost" id="btnPreview">生成预览</button>
+    <button id="btnPublish">发布迁移图</button>
+  </span>
+</header>
+
+<div id="conflictBox"></div>
+
+<main>
+  <section class="card" id="cardOnto">
+    <h2>本体子图 <span class="row">
+      <span class="seg">
+        <button class="ghost" data-graph="v1">v1 旧</button>
+        <button class="ghost" data-graph="v2">v2 新</button>
+      </span></span>
+    </h2>
+    <div class="body" id="ontology"></div>
+  </section>
+
+  <section class="card">
+    <h2>受影响实例（v1） <span class="pill mono" id="instfp"></span></h2>
+    <div class="body" id="instances"></div>
+  </section>
+
+  <section class="card full">
+    <h2>映射候选与决议 <span class="muted">证据 · 生效版本 · 理由；已接受决议不会被自动建议覆盖</span></h2>
+    <div class="body">
+      <div id="affected"></div>
+      <div id="candidates"></div>
+    </div>
+  </section>
+
+  <section class="card full">
+    <h2>迁移预览：派生三元组（原 triple → 映射路径 → 新 triple）</h2>
+    <div class="body">
+      <div class="row" style="margin-bottom:8px">
+        <span class="pill">内容指纹 <b id="contentfp" class="mono">-</b></span>
+        <span class="pill">规则指纹 <b id="prevrulefp" class="mono">-</b></span>
+        <span class="pill">预览指纹 <b id="previewfp" class="mono">-</b></span>
+        <span class="pill">已派生 <b id="migcount">0</b></span>
+        <span class="pill">已丢弃 <b id="dropcount">0</b></span>
+      </div>
+      <table id="derived">
+        <thead><tr><th style="width:32%">原 triple / 来源图</th><th style="width:24%">映射路径</th><th>派生 v2 triple</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card full">
+    <h2>SHACL 诊断（缺失 / datatype / 闭集 / 映射矛盾）</h2>
+    <div class="body">
+      <table id="violations">
+        <thead><tr><th>类别</th><th>焦点节点</th><th>路径/值</th><th>说明</th><th>证据路径</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+<script src="/app.js"></script>
+</body>
+</html>

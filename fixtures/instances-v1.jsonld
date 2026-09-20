@@ -1,0 +1,114 @@
+{
+  "@context": {
+    "v1": "http://example.org/vocab/v1#",
+    "v2": "http://example.org/vocab/v2#",
+    "@vocab": "http://example.org/vocab/v1#"
+  },
+  "@graph": [
+    {
+      "@id": "v1:alice",
+      "@type": "v1:Person",
+      "givenName": "Alice",
+      "years": 30,
+      "memberOf": {
+        "@id": "v1:acme"
+      },
+      "hasContact": [
+        {
+          "@id": "v1:carol"
+        }
+      ],
+      "address": [
+        {
+          "@value": "1-1-1 Chiyoda, Tokyo",
+          "@language": "en"
+        }
+      ],
+      "legacyCode": "P-0001",
+      "hasLocationContact": [
+        {
+          "@id": "v1:carol"
+        }
+      ]
+    },
+    {
+      "@id": "v1:bob",
+      "@type": "v1:Person",
+      "givenName": "Bob",
+      "years": {
+        "@value": "forty-two",
+        "@type": "http://www.w3.org/2001/XMLSchema#string"
+      },
+      "note": "age was backfilled as text"
+    },
+    {
+      "@id": "v1:carol",
+      "@type": "v1:Person",
+      "givenName": "Carol",
+      "years": 41
+    },
+    {
+      "@id": "v1:acme",
+      "@type": "v1:Organization",
+      "name": "Acme K.K."
+    },
+    {
+      "@id": "v1:dave",
+      "@type": "v1:Person",
+      "memberOf": {
+        "@id": "v1:acme"
+      }
+    },
+    {
+      "@id": "v1:erin",
+      "@type": "v1:Person",
+      "givenName": "Erin",
+      "years": 33,
+      "contactEmail": "erin@example.com"
+    },
+    {
+      "@id": "v1:frank",
+      "@type": "v1:Person",
+      "givenName": "Frank",
+      "years": 50,
+      "hasPostalAddress": [
+        {
+          "@id": "v1:addr-de"
+        }
+      ],
+      "hasLocation": [
+        {
+          "@id": "v1:addr-loose"
+        },
+        {
+          "@id": "v1:addr-unknown"
+        }
+      ]
+    },
+    {
+      "@id": "v1:addr-de",
+      "@type": "v1:PostalAddress",
+      "fullText": "Hauptstr. 1, Berlin",
+      "isoCountryCode": "DE"
+    },
+    {
+      "@id": "v1:addr-loose",
+      "@type": "v1:PostalAddress",
+      "fullText": "Somewhere on the old road"
+    },
+    {
+      "@id": "v1:addr-unknown",
+      "@type": "v1:PostalAddress"
+    },
+    {
+      "@id": "v1:mallory",
+      "@type": [
+        "v1:Person",
+        "v1:Organization"
+      ],
+      "givenName": "Mallory",
+      "years": 29,
+      "status": "archived"
+    }
+  ]
+}

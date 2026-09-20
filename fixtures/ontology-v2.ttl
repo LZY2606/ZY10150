@@ -1,0 +1,66 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix v2:   <http://example.org/vocab/v2#> .
+
+v2:Human a owl:Class ;
+  rdfs:label "Human"@en ;
+  rdfs:label "人間"@ja ;
+  rdfs:comment "A human individual (current vocabulary)."@en ;
+  rdfs:subClassOf v2:Actor ;
+  owl:disjointWith v2:Organization , v2:Location .
+
+v2:Organization a owl:Class ;
+  rdfs:label "Organization"@en ;
+  rdfs:label "組織"@ja ;
+  rdfs:subClassOf v2:Actor ;
+  owl:disjointWith v2:Human .
+
+v2:Actor a owl:Class ;
+  rdfs:label "Actor"@en .
+
+v2:Location a owl:Class ;
+  rdfs:label "Location"@en ;
+  rdfs:label "場所"@ja ;
+  owl:disjointWith v2:PostalAddress .
+
+v2:PostalAddress a owl:Class ;
+  rdfs:label "Postal Address"@en ;
+  rdfs:comment "Reified postal address (current vocabulary)."@en ;
+  owl:disjointWith v2:Location .
+
+v2:firstName a owl:DatatypeProperty ;
+  rdfs:label "First Name"@en ;
+  rdfs:domain v2:Human ;
+  rdfs:range xsd:string .
+
+v2:age a owl:DatatypeProperty ;
+  rdfs:label "Age"@en ;
+  rdfs:domain v2:Human ;
+  rdfs:range xsd:integer .
+
+v2:affiliation a owl:ObjectProperty ;
+  rdfs:label "Affiliation"@en ;
+  rdfs:domain v2:Human ;
+  rdfs:range v2:Organization .
+
+v2:contactPerson a owl:ObjectProperty ;
+  rdfs:label "Contact Person"@en ;
+  rdfs:range v2:Human .
+
+v2:fullAddress a owl:DatatypeProperty ;
+  rdfs:label "Full Address"@en ;
+  rdfs:range xsd:string .
+
+v2:locatedAt a owl:ObjectProperty ;
+  rdfs:label "Located At"@en ;
+  rdfs:range v2:PostalAddress .
+
+v2:countryCode a owl:DatatypeProperty ;
+  rdfs:label "Country Code"@en ;
+  rdfs:range xsd:string .
+
+v2:status a owl:DatatypeProperty ;
+  rdfs:label "Lifecycle Status"@en ;
+  rdfs:range xsd:string .

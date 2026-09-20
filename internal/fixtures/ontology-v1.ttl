@@ -1,0 +1,85 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix v1:   <http://example.org/vocab/v1#> .
+
+v1:Person a owl:Class ;
+  rdfs:label "Person"@en ;
+  rdfs:label "人物"@ja ;
+  rdfs:comment "A human being (legacy vocabulary)."@en ;
+  rdfs:subClassOf v1:Agent .
+
+v1:Organization a owl:Class ;
+  rdfs:label "Organization"@en ;
+  rdfs:label "組織"@ja ;
+  rdfs:comment "An organized group (legacy vocabulary)."@en ;
+  rdfs:subClassOf v1:Agent .
+
+v1:Agent a owl:Class ;
+  rdfs:label "Agent"@en .
+
+v1:PostalAddress a owl:Class ;
+  rdfs:label "Postal Address"@en ;
+  rdfs:comment "Structured postal address (legacy)."@en .
+
+v1:givenName a owl:DatatypeProperty ;
+  rdfs:label "Given Name"@en ;
+  rdfs:domain v1:Person ;
+  rdfs:range xsd:string .
+
+v1:years a owl:DatatypeProperty ;
+  rdfs:label "Years (age)"@en ;
+  rdfs:domain v1:Person ;
+  rdfs:range xsd:integer .
+
+v1:memberOf a owl:ObjectProperty ;
+  rdfs:label "Member Of"@en ;
+  rdfs:domain v1:Person ;
+  rdfs:range v1:Organization .
+
+v1:hasContact a owl:ObjectProperty ;
+  rdfs:label "Has Contact"@en ;
+  rdfs:range v1:Person .
+
+v1:address a owl:DatatypeProperty ;
+  rdfs:label "Address Line"@en ;
+  rdfs:range xsd:string .
+
+v1:note a owl:DatatypeProperty ;
+  rdfs:label "Note"@en ;
+  owl:deprecated true .
+
+v1:legacyCode a owl:DatatypeProperty ;
+  rdfs:label "Legacy Code"@en ;
+  owl:deprecated true ;
+  rdfs:range xsd:string .
+
+v1:isoCountryCode a owl:DatatypeProperty ;
+  rdfs:label "Country Code"@en ;
+  rdfs:range xsd:string .
+
+v1:name a owl:DatatypeProperty ;
+  rdfs:label "Name"@en ;
+  rdfs:range xsd:string .
+
+v1:fullText a owl:DatatypeProperty ;
+  rdfs:label "Full Text"@en ;
+  rdfs:domain v1:PostalAddress ;
+  rdfs:range xsd:string .
+
+v1:hasPostalAddress a owl:ObjectProperty ;
+  rdfs:label "Has Postal Address"@en ;
+  rdfs:range v1:PostalAddress .
+
+v1:hasLocation a owl:ObjectProperty ;
+  rdfs:label "Has Location"@en ;
+  rdfs:range v1:PostalAddress .
+
+v1:status a owl:DatatypeProperty ;
+  rdfs:label "Status"@en ;
+  rdfs:range xsd:string .
+
+v1:hasLocationContact a owl:ObjectProperty ;
+  rdfs:label "Location Contact"@en ;
+  rdfs:range v1:Person .

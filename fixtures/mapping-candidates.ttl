@@ -1,0 +1,218 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix v1:   <http://example.org/vocab/v1#> .
+@prefix v2:   <http://example.org/vocab/v2#> .
+@prefix map:  <http://example.org/mapping#> .
+
+# ---------------------------------------------------------------------------
+# Explicitly curated mapping candidates. Each binds source/target versions and
+# human/machine evidence. map:initialStatus seeds the review state for the demo
+# (accepted decisions are never overwritten by a later auto-suggest round).
+# ---------------------------------------------------------------------------
+
+map:cand-person a map:Candidate ;
+  map:source v1:Person ;
+  map:sourceTermType map:Class ;
+  map:relation map:exact ;
+  map:target v2:Human ;
+  map:sourceVersion "v1" ;
+  map:targetVersion "v2" ;
+  map:initialStatus map:accepted ;
+  map:rationale "Person/Human model the same individual concept; domains align." ;
+  map:evidence [
+    map:basis "rdfs:label equivalence across languages" ;
+    map:detail "\"人物\"@ja matches \"人間\"@ja via synonym set curated in term review" ;
+    map:sourceGraph <urn:gsb:ontology-v1> ;
+    map:sourcePath "v1:Person rdfs:label \"人物\"@ja"
+  ] , [
+    map:basis "domain/range alignment of child properties" ;
+    map:detail "v1:givenName/v1:years range aligns with v2:firstName/v2:age" ;
+    map:sourceGraph <urn:gsb:ontology-v1>
+  ] .
+
+map:cand-org a map:Candidate ;
+  map:source v1:Organization ;
+  map:sourceTermType map:Class ;
+  map:relation map:exact ;
+  map:target v2:Organization ;
+  map:sourceVersion "v1" ;
+  map:targetVersion "v2" ;
+  map:initialStatus map:accepted ;
+  map:rationale "Same local name and identical class hierarchy under Agent/Actor." ;
+  map:evidence [
+    map:basis "identical local name" ;
+    map:detail "v1:Organization and v2:Organization share local name and label"
+  ] , [
+    map:basis "rdfs:subClassOf structure" ;
+    map:detail "both are sub-classes of the v1:Agent / v2:Actor root"
+  ] .
+
+map:cand-agent a map:Candidate ;
+  map:source v1:Agent ;
+  map:sourceTermType map:Class ;
+  map:relation map:exact ;
+  map:target v2:Actor ;
+  map:sourceVersion "v1" ;
+  map:targetVersion "v2" ;
+  map:initialStatus map:accepted ;
+  map:rationale "Root party class renamed Agent -> Actor." ;
+  map:evidence [ map:basis "root class position in subclass tree" ] .
+
+# Broader relation: v2:Location is wider than a structured postal address.
+map:cand-addr-broad a map:Candidate ;
+  map:source v1:PostalAddress ;
+  map:sourceTermType map:Class ;
+  map:relation map:broader ;
+  map:target v2:Location ;
+  map:sourceVersion "v1" ;
+  map:targetVersion "v2" ;
+  map:initialStatus map:pending ;
+  map:rationale "Free-text legacy addresses are closer to a generic Location." ;
+  map:evidence [
+    map:basis "analyst review" ;
+    map:detail "v2:Location is broader than v1:PostalAddress (covers non-postal places)"
+  ] .
+
+# One-to-many with discriminator conditions; when no branch fires the instance
+# stays UNRESOLVED instead of being assigned a branch at random.
+map:cand-addr-o2m a map:Candidate ;
+  map:source v1:PostalAddress ;
+  map:sourceTermType map:Class ;
+  map:relation map:oneToMany ;
+  map:sourceVersion "v1" ;
+  map:targetVersion "v2" ;
+  map:initialStatus map:pending ;
+  map:rationale "Structured vs free-text postal data split into PostalAddress/Location." ;
+  map:branch [
+    map:target v2:PostalAddress ;
+    map:condition [ map:property v1:isoCountryCode ; map:operator map:present ]
+  ] ;
+  map:branch [
+    map:target v2:Location ;
+    map:condition [ map:property v1:fullText ; map:operator map:present ] ;
+    map:condition [ map:property v1:isoCountryCode ; map:operator map:absent ]
+  ] ;
+  map:evidence [
+    map:basis "schema change request SCR-77" ;
+    map:detail "v2 splits postal addresses by presence of ISO country code"
+  ] .
+
+map:cand-given a map:Candidate ;
+  map:source v1:givenName ;
+  map:sourceTermType map:Property ;
+  map:relation map:exact ;
+  map:target v2:firstName ;
+  map:sourceVersion "v1" ; map:targetVersion "v2" ;
+  map:initialStatus map:accepted ;
+  map:rationale "Personal given name property renamed." ;
+  map:evidence [ map:basis "rdfs:range xsd:string and domain Person/Human" ] .
+
+map:cand-age a map:Candidate ;
+  map:source v1:years ;
+  map:sourceTermType map:Property ;
+  map:relation map:exact ;
+  map:target v2:age ;
+  map:sourceVersion "v1" ; map:targetVersion "v2" ;
+  map:initialStatus map:accepted ;
+  map:rationale "Integer age property renamed." ;
+  map:evidence [ map:basis "rdfs:range xsd:integer alignment" ] .
+
+map:cand-member a map:Candidate ;
+  map:source v1:memberOf ;
+  map:sourceTermType map:Property ;
+  map:relation map:exact ;
+  map:target v2:affiliation ;
+  map:sourceVersion "v1" ; map:targetVersion "v2" ;
+  map:initialStatus map:accepted ;
+  map:rationale "Person -> Organization membership property renamed." ;
+  map:evidence [ map:basis "object property domain/range alignment" ] .
+
+map:cand-contact a map:Candidate ;
+  map:source v1:hasContact ;
+  map:sourceTermType map:Property ;
+  map:relation map:exact ;
+  map:target v2:contactPerson ;
+  map:sourceVersion "v1" ; map:targetVersion "v2" ;
+  map:initialStatus map:accepted ;
+  map:rationale "Contact object property renamed; range stays a person." ;
+  map:evidence [ map:basis "object property with person-valued range" ] .
+
+map:cand-fulladdr a map:Candidate ;
+  map:source v1:address ;
+  map:sourceTermType map:Property ;
+  map:relation map:exact ;
+  map:target v2:fullAddress ;
+  map:sourceVersion "v1" ; map:targetVersion "v2" ;
+  map:initialStatus map:accepted ;
+  map:rationale "Free-text address line renamed." ;
+  map:evidence [ map:basis "rdfs:range xsd:string" ] .
+
+map:cand-country a map:Candidate ;
+  map:source v1:isoCountryCode ;
+  map:sourceTermType map:Property ;
+  map:relation map:exact ;
+  map:target v2:countryCode ;
+  map:sourceVersion "v1" ; map:targetVersion "v2" ;
+  map:initialStatus map:accepted ;
+  map:rationale "ISO country code property renamed." ;
+  map:evidence [ map:basis "rdfs:range xsd:string and code value space" ] .
+
+# Explicit deprecation: legacyCode has no replacement in v2.
+map:cand-legacycode a map:Candidate ;
+  map:source v1:legacyCode ;
+  map:sourceTermType map:Property ;
+  map:relation map:deprecated ;
+  map:sourceVersion "v1" ; map:targetVersion "v2" ;
+  map:initialStatus map:accepted ;
+  map:rationale "Internal legacy bookkeeping code removed during cleanup." ;
+  map:evidence [ map:basis "owl:deprecated true in v1 ontology" ] .
+
+map:cand-fulltext a map:Candidate ;
+  map:source v1:fullText ;
+  map:sourceTermType map:Property ;
+  map:relation map:exact ;
+  map:target v2:fullAddress ;
+  map:sourceVersion "v1" ; map:targetVersion "v2" ;
+  map:initialStatus map:accepted ;
+  map:rationale "Postal full text becomes fullAddress." ;
+  map:evidence [ map:basis "domain v1:PostalAddress" ] .
+
+map:cand-postalobj a map:Candidate ;
+  map:source v1:hasPostalAddress ;
+  map:sourceTermType map:Property ;
+  map:relation map:exact ;
+  map:target v2:locatedAt ;
+  map:sourceVersion "v1" ; map:targetVersion "v2" ;
+  map:initialStatus map:accepted ;
+  map:rationale "Object link to a structured postal address." ;
+  map:evidence [ map:basis "object property range v1:PostalAddress" ] .
+
+map:cand-locationobj a map:Candidate ;
+  map:source v1:hasLocation ;
+  map:sourceTermType map:Property ;
+  map:relation map:exact ;
+  map:target v2:locatedAt ;
+  map:sourceVersion "v1" ; map:targetVersion "v2" ;
+  map:initialStatus map:accepted ;
+  map:rationale "Object link to a free-text location (same edge after class split)." ;
+  map:evidence [ map:basis "object property range v1:PostalAddress" ] .
+
+map:cand-loccontact a map:Candidate ;
+  map:source v1:hasLocationContact ;
+  map:sourceTermType map:Property ;
+  map:relation map:exact ;
+  map:target v2:contactPerson ;
+  map:sourceVersion "v1" ; map:targetVersion "v2" ;
+  map:initialStatus map:accepted ;
+  map:rationale "Free-text location contact stays a person edge." ;
+  map:evidence [ map:basis "object property range v1:Person" ] .
+
+map:cand-status a map:Candidate ;
+  map:source v1:status ;
+  map:sourceTermType map:Property ;
+  map:relation map:exact ;
+  map:target v2:status ;
+  map:sourceVersion "v1" ; map:targetVersion "v2" ;
+  map:initialStatus map:accepted ;
+  map:rationale "Lifecycle status property renamed." ;
+  map:evidence [ map:basis "rdfs:range xsd:string" ] .
